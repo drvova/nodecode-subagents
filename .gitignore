@@ -1,0 +1,6 @@
+*.fasl
+*.o
+*.dll
+*.exe
+.DS_Store
+Thumbs.db
