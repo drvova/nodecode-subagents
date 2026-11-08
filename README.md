@@ -107,16 +107,30 @@ Workers use the workspace paths you provide. Those directories are shared, not i
 
 ## Artwork
 
-The animated top-left Foresight Labs mark is not a downloadable 3D model: it is a 312 × 266 pixel-art SVG whose path geometry changes on pointer hover, with a canvas reticle that follows the pointer. This README keeps the source's seven color layers and 253 rectangles, extrudes them into a thicker 3D relief, and adds a faster swim loop with independent gill and limb motion, body breathing, and a blink.
+The Foresight Labs header mark is not a downloadable 3D model. Its live source is a 312 × 266 pixel-art SVG with seven color paths and 253 rectangular cells. The live site also morphs SVG paths on hover and draws a pointer-following canvas reticle; this README animation is a 3D reinterpretation of the source geometry, not a port of that hover effect.
 
-From `artwork/`, regenerate the geometry, STL preview, animation loops, and reduced-motion stills with [RAEA](https://raea.io/install) and `ffmpeg` installed:
+### How the source artwork became a 3D animation
+
+1. **Inspect the real asset.** The SVG markup and rendered header were compared directly, recording the `viewBox`, path order, fills, and hover behavior instead of tracing a screenshot or guessing at a 3D model.
+2. **Preserve and parse its geometry.** [`nodecode-axolotl.svg`](artwork/media/nodecode-axolotl.svg) is the editable source. [`export-axolotl-stl.py`](artwork/export-axolotl-stl.py) parses its closed rectangular path cells, retains each fill and coordinate, and writes [`axo-pixels.json`](artwork/axo-pixels.json) plus an STL preview. Unsupported path commands fail the export rather than silently changing the silhouette.
+3. **Extrude the original layers.** [`axolotl-model.tsx`](artwork/axolotl-model.tsx) turns each rectangle into a RAEA cross-section, unions cells within each animated part, then extrudes the colored layers with small depth offsets. The original SVG coordinate system stays intact, so the 3D relief keeps the source proportions and pixel edges.
+4. **Rig around real attachments.** Source cells are grouped into body, gills, eyes, and limb sections. Pivots sit at the limb roots; the shoulder rows stay with the torso while the lower sections paddle, preventing the legs from pulling away. Gills move independently with offset phases.
+5. **Build a deterministic swim cycle.** [`axolotl-3d.tsx`](artwork/axolotl-3d.tsx) creates four 96-frame, 24-fps section loops with different phases and views. [`readme-hero.tsx`](artwork/readme-hero.tsx) reuses the same model in a six-second hero. Frame-based body drift, yaw, pitch, roll, breathing, gill/limb strokes, and a brief blink create secondary motion without changing the mascot design.
+6. **Render for GitHub.** [`render-readme-mascot.ps1`](artwork/render-readme-mascot.ps1) renders each RAEA composition to video and a representative PNG still; FFmpeg converts the video to a looping, palette-optimized GIF. The README's `<picture>` elements serve the stills when reduced motion is preferred.
+7. **Check the actual frames.** Inspect the stills, limb roots, stroke extremes, and loop seam at display size; compare the silhouette to the SVG; then verify both the GIF and reduced-motion PNG in the rendered README.
+
+The [portable source-artwork-to-3D-animation skill](skills/source-artwork-3d-animation/SKILL.md) generalizes this workflow across projects and toolchains. Copy its folder into an agent's supported skills directory to reuse it elsewhere.
+
+### Regenerate the artwork
+
+From `artwork/`, regenerate the rectangle data, STL preview, animation loops, and reduced-motion stills with [RAEA](https://raea.io/install) and `ffmpeg` installed:
 
 ```powershell
 python .\export-axolotl-stl.py
 .\render-readme-mascot.ps1
 ```
 
-The live vector source is [`nodecode-axolotl.svg`](artwork/media/nodecode-axolotl.svg); the source-derived model has an [interactive STL preview](artwork/media/nodecode-axolotl.stl). RAEA and ffmpeg are needed only to regenerate artwork, not to run this cell.
+RAEA and FFmpeg are needed only to regenerate the artwork, not to run this cell. The source-derived model also has an [interactive STL preview](artwork/media/nodecode-axolotl.stl).
 
 ## License
 
