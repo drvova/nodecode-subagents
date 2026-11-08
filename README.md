@@ -1,33 +1,37 @@
 # Nodecode Subagents
 
+<p align="center">
+  <img src="artwork/subagents-hero.png" alt="A named task assignment branches into detached worker sessions, which coordinate through Nodecode Board." width="100%" />
+</p>
+
+<p align="center">
+  <a href="#install">Install</a> ·
+  <a href="#configure">Configure</a> ·
+  <a href="#tools">Tools</a> ·
+  <a href="#sessions-and-coordination">Sessions and coordination</a>
+</p>
+
 An OMP-style Nodecode cell for parallel child sessions and IRC-style coordination on Nodecode's durable Board.
-
-It registers three provider-facing tools:
-
-- `task` starts detached worker sessions from explicit assignments.
-- `agents` lists, waits for, or stops workers.
-- `irc` joins the shared board, sends and reads messages, waits for replies, or lists members.
-
-## Requirements
-
-- Nodecode with local-cell loading enabled.
-- Nodecode's `nodecode-board` cell installed and enabled. IRC coordination uses its durable board.
 
 ## Install
 
 Clone this repository into Nodecode's local cells directory, then restart Nodecode or run `(restart-cells)`:
 
-**PowerShell**
+**Windows · PowerShell**
 
 ```powershell
 git clone https://github.com/drvova/nodecode-subagents "$HOME\.nodecode\cells\nodecode-subagents"
 ```
 
-**macOS / Linux**
+**macOS · Linux**
 
 ```sh
 git clone https://github.com/drvova/nodecode-subagents "$HOME/.nodecode/cells/nodecode-subagents"
 ```
+
+Nodecode must have local-cell loading enabled. Install and enable the `nodecode-board` cell as well; it provides the durable board used for coordination.
+
+## Configure
 
 Enable both cells in `~/.nodecode/config.jsonc`:
 
@@ -41,19 +45,35 @@ Enable both cells in `~/.nodecode/config.jsonc`:
 }
 ```
 
-`max_agents` accepts 1–5 and controls concurrency only. Worker turns use Nodecode's active turn-budget policy, if any; this cell adds no fixed per-worker or team-wide token/time ceiling. Provider/model availability and limits remain upstream.
+`max_agents` accepts 1–5 and controls concurrency only. This cell adds no per-worker or team-wide token/time ceiling and does not override Nodecode's turn-budget policy. Workers inherit the parent's model selection; Nodecode and the selected provider/model remain responsible for their own limits.
 
-When upgrading from 0.1.x, remove `budget_tokens` and `budget_seconds` from `~/.nodecode/config.jsonc`; they are no longer read.
+When upgrading from 0.1.x, remove `budget_tokens` and `budget_seconds` from `~/.nodecode/config.jsonc`; the cell no longer reads them.
 
-## Tool behavior
+## Tools
 
-A `task` request contains one or more `{ "name", "task" }` assignments and may include a shared context, a common workspace, per-assignment workspaces, and an `await` timeout. Child sessions inherit the parent's model selection, not its conversation, so include the context they need explicitly.
+| Tool | What it does |
+| --- | --- |
+| `task` | Starts detached worker sessions from one or more named assignments. |
+| `agents` | Lists, waits for, or stops workers. |
+| `irc` | Joins the shared Board, sends and reads messages, waits for replies, or lists members. |
 
-Workers use the workspace paths you give them. Those directories are shared; the cell does not create isolated worktrees. Use separate existing directories for workers that may edit the same files.
+## Sessions and coordination
 
-`agents` accepts `op` values `list`, `wait`, or `stop`. `irc` accepts `join`, `send`, `inbox`, `history`, `wait`, or `roster`; messages are stored on Nodecode Board.
+A `task` request accepts `{ "name", "task" }` assignments and may include shared context, a common workspace, per-assignment workspaces, and an `await` timeout. Child sessions inherit the parent's model selection, not its conversation; include the context they need explicitly.
 
-The tools are called by their provider-facing names. They are not Lisp functions to invoke from `eval`.
+Workers use the workspace paths you provide. Those directories are shared, not isolated worktrees. Give workers separate existing directories when they may edit the same files.
+
+`agents` accepts `list`, `wait`, and `stop`. `irc` accepts `join`, `send`, `inbox`, `history`, `wait`, and `roster`; messages are stored on Nodecode Board. These are provider-facing tools, not Lisp functions to call from `eval`.
+
+## Artwork
+
+The header is rendered with [RAEA](https://raea.io/install). The composition and measured Nodecode palette are in `artwork/`; from that directory, regenerate the image with:
+
+```sh
+raea render readme-hero.tsx --frame 0 -o subagents-hero.png
+```
+
+RAEA is only needed to regenerate the README image, not to run this cell.
 
 ## License
 

@@ -1,0 +1,60 @@
+{
+  "palette": {
+    "primary": "#ffffff",
+    "accent": "#fa8b3e",
+    "surface": "#000000",
+    "text_on_surface": "#ededed",
+    "text_on_accent": null
+  },
+  "contrast": {
+    "text_on_surface": 17.94,
+    "accent_on_surface": 8.83,
+    "text_on_accent": null
+  },
+  "colors": [
+    { "name": "void", "hex": "#000000", "css": "--brand-background" },
+    { "name": "canvas", "hex": "#0e0e0e", "css": "--brand-canvas" },
+    { "name": "inset", "hex": "#070707", "css": "--brand-inset" },
+    { "name": "surface", "hex": "#1d1d1d", "css": "--brand-surface" },
+    { "name": "primary", "hex": "#ffffff", "css": "--brand-primary" },
+    { "name": "foreground", "hex": "#ededed", "css": "--brand-text" },
+    { "name": "secondary", "hex": "#c6c6c6", "css": "--brand-secondary" },
+    { "name": "muted", "hex": "#9c9c9c", "css": "--brand-muted" },
+    { "name": "tertiary", "hex": "#7d7d7d", "css": "--brand-tertiary" },
+    { "name": "accent", "hex": "#fa8b3e", "css": "--brand-accent" },
+    { "name": "seam", "hex": "#202020", "css": "--brand-seam" },
+    { "name": "seam-lit", "hex": "#303030", "css": "--brand-seam-lit" }
+  ],
+  "fonts": {
+    "heading": "nodecodeSans; local fallback Arial, Helvetica Neue, system-ui",
+    "body": "nodecodeSans; local fallback Arial, Helvetica Neue, system-ui",
+    "mono": "nodecodeMono; local fallback Cascadia Mono, Consolas, ui-monospace",
+    "micro": "nodecodeMicro; local fallback Cascadia Mono, Consolas, ui-monospace"
+  },
+  "scale": {
+    "h1": { "size": "44px", "weight": 500, "line": 1.1, "tracking": "-0.03em" },
+    "h2": { "size": "28px", "weight": 500, "line": 1.1, "tracking": "-0.03em" },
+    "body": { "size": "16px", "weight": 400, "line": 1.5 },
+    "micro": { "size": "10.5px", "tracking": "0.1em" }
+  },
+  "button": null,
+  "radius": "0px",
+  "shadow": null,
+  "logos": [],
+  "source": {
+    "url": "https://nodecode.ai/",
+    "observed_at": "2026-11-07",
+    "by_hand": {
+      "palette.void": "Computed --color-void from the live page's documentElement styles.",
+      "palette.accent": "Computed --color-accent from the live page's documentElement styles.",
+      "palette.surface": "Computed --color-surface from the live page's documentElement styles.",
+      "palette.text_on_surface": "Computed --color-foreground from the live page's documentElement styles.",
+      "fonts.heading": "Computed h1 font-family from the live page.",
+      "fonts.body": "Computed p font-family from the live page.",
+      "scale.h1": "Computed h1 font-size, font-weight, and letter-spacing from the live page.",
+      "scale.h2": "Computed h2 font-size, font-weight, and letter-spacing from the live page.",
+      "scale.body": "Computed p font-size and font-weight from the live page.",
+      "scale.micro": "Computed --micro-label and --micro-label-track on the live page."
+    }
+  }
+}

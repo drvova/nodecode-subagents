@@ -1,0 +1,28 @@
+:root {
+  --brand-background: #000000;
+  --brand-canvas: #0e0e0e;
+  --brand-inset: #070707;
+  --brand-surface: #1d1d1d;
+  --brand-primary: #ffffff;
+  --brand-text: #ededed;
+  --brand-secondary: #c6c6c6;
+  --brand-muted: #9c9c9c;
+  --brand-tertiary: #7d7d7d;
+  --brand-accent: #fa8b3e;
+  --brand-seam: #202020;
+  --brand-seam-lit: #303030;
+  --brand-font-heading: "Arial", "Helvetica Neue", system-ui, sans-serif;
+  --brand-font: "Arial", "Helvetica Neue", system-ui, sans-serif;
+  --brand-font-mono: "Cascadia Mono", "Consolas", ui-monospace, monospace;
+  --brand-h1-size: 44px;
+  --brand-h1-weight: 500;
+  --brand-h1-line: 1.1;
+  --brand-h1-tracking: -0.03em;
+  --brand-h2-size: 28px;
+  --brand-h2-weight: 500;
+  --brand-h2-line: 1.1;
+  --brand-h2-tracking: -0.03em;
+  --brand-p-size: 16px;
+  --brand-p-line: 1.5;
+  --brand-radius: 0px;
+}
