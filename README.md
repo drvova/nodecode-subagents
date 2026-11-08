@@ -119,7 +119,7 @@ The [Foresight Labs](https://foresight-labs.eu/) mark is a 312 × 266 pixel-art 
 6. **Render for GitHub.** [`render-readme-mascot.ps1`](artwork/render-readme-mascot.ps1) renders each RAEA composition to video and a representative PNG still; FFmpeg converts the video to a looping, palette-optimized GIF. The README's `<picture>` elements serve the stills when reduced motion is preferred.
 7. **Check the actual frames.** Inspect the stills, limb roots, stroke extremes, and loop seam at display size; compare the silhouette to the SVG; then verify both the GIF and reduced-motion PNG in the rendered README.
 
-The [portable 2D frame-animation skill](skills/source-artwork-2d-animation/SKILL.md) and [portable 3D-animation skill](skills/source-artwork-3d-animation/SKILL.md) generalize these workflows across projects and toolchains. Copy either folder into an agent's supported skills directory to reuse it elsewhere.
+The [universal source-artwork reconstruction skill](skills/source-artwork-2d-3d-reconstruction/SKILL.md) covers 1:1 2D reproduction and faithful 3D reconstruction, while distinguishing recovered source geometry from inferred depth. The focused [2D](skills/source-artwork-2d-animation/SKILL.md) and [3D](skills/source-artwork-3d-animation/SKILL.md) skills are also available. Copy any skill folder into an agent's supported skills directory to reuse it elsewhere.
 
 ### Regenerate the artwork
 
