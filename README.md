@@ -1,7 +1,10 @@
 # Nodecode Subagents
 
 <p align="center">
-  <img src="artwork/subagents-hero.png" alt="Nodecode's axolotl mascot sits beside named task assignments branching into detached worker sessions that coordinate through Nodecode Board." width="100%" />
+  <picture>
+    <source media="(prefers-reduced-motion: reduce)" srcset="artwork/subagents-hero.png" />
+    <img src="artwork/subagents-hero.gif" alt="The live Nodecode axolotl, built from its exact SVG geometry as a 3D extrusion, swimming with fluttering gills and out-of-phase limb strokes beside the subagents workflow." width="100%" />
+  </picture>
 </p>
 
 <p align="center">
@@ -14,6 +17,13 @@
 An OMP-style Nodecode cell for parallel child sessions and IRC-style coordination on Nodecode's durable Board. Nodecode's built-in `eval` is the sole model tool; this cell adds reusable Lisp APIs, not provider-facing tools.
 
 ## Install
+
+<p align="right">
+  <picture>
+    <source media="(prefers-reduced-motion: reduce)" srcset="artwork/media/axolotl-setup-still.png" />
+    <img src="artwork/axolotl-setup.gif" alt="The source-derived axolotl swims beside the installation instructions, fluttering its gills as its limbs paddle." width="200" />
+  </picture>
+</p>
 
 Clone this repository into Nodecode's local cells directory, then restart Nodecode or run `(restart-cells)`:
 
@@ -33,6 +43,13 @@ Nodecode must have local-cell loading enabled. Install and enable the `nodecode-
 
 ## Configure
 
+<p align="right">
+  <picture>
+    <source media="(prefers-reduced-motion: reduce)" srcset="artwork/media/axolotl-configure-still.png" />
+    <img src="artwork/axolotl-configure.gif" alt="The source-derived axolotl swims beside configuration instructions, with gills and limbs moving independently." width="200" />
+  </picture>
+</p>
+
 Enable both cells in `~/.nodecode/config.jsonc`:
 
 ```jsonc
@@ -51,6 +68,13 @@ When upgrading from 0.1.x, remove `budget_tokens` and `budget_seconds` from `~/.
 
 ## Eval APIs
 
+<p align="right">
+  <picture>
+    <source media="(prefers-reduced-motion: reduce)" srcset="artwork/media/axolotl-eval-apis-still.png" />
+    <img src="artwork/axolotl-eval-apis.gif" alt="The source-derived axolotl paddles through a seamless swim loop beside the eval API section." width="200" />
+  </picture>
+</p>
+
 The cell exports `subagents:task`, `subagents:agents`, and `subagents:irc`. Call them as Common Lisp forms through Nodecode's built-in `eval`:
 
 ```lisp
@@ -68,6 +92,13 @@ The cell exports `subagents:task`, `subagents:agents`, and `subagents:irc`. Call
 
 ## Sessions and coordination
 
+<p align="right">
+  <picture>
+    <source media="(prefers-reduced-motion: reduce)" srcset="artwork/media/axolotl-sessions-still.png" />
+    <img src="artwork/axolotl-sessions.gif" alt="The source-derived axolotl turns and paddles through the sessions section, its gills fluttering with the swim cycle." width="200" />
+  </picture>
+</p>
+
 A `task` request accepts `:name` and `:task` assignments and may include shared context, a common workspace, per-assignment workspaces, and an `:await` timeout. Child sessions inherit the parent's model selection, not its conversation; include the context they need explicitly.
 
 Workers use the workspace paths you provide. Those directories are shared, not isolated worktrees. Give workers separate existing directories when they may edit the same files.
@@ -76,13 +107,16 @@ Workers use the workspace paths you provide. Those directories are shared, not i
 
 ## Artwork
 
-The header is rendered with [RAEA](https://raea.io/install). The hero uses the original axolotl mascot vector from the [nodecode.ai](https://nodecode.ai/) header, stored at `artwork/media/nodecode-axolotl.svg`. The composition and measured palette are in `artwork/`; from that directory, regenerate the image with:
+The live homepage header uses a 312 × 266 SVG; it does not expose a 3D model or animation asset. This artwork preserves the live vector's seven paths and 253 rectangles, extrudes the original palette into depth, and rigs its gills and paired limbs. The gills flutter twice per swim stroke, the limbs paddle out of phase, and the body rolls, breathes, and turns on a phase-closed loop.
 
-```sh
-raea render readme-hero.tsx --frame 0 -o subagents-hero.png
+From `artwork/`, regenerate the geometry, STL preview, animation loops, and reduced-motion stills with [RAEA](https://raea.io/install) and `ffmpeg` installed:
+
+```powershell
+python .\export-axolotl-stl.py
+.\render-readme-mascot.ps1
 ```
 
-RAEA is only needed to regenerate the README image, not to run this cell.
+The live vector source is [`nodecode-axolotl.svg`](artwork/media/nodecode-axolotl.svg); the source-derived model has an [interactive STL preview](artwork/media/nodecode-axolotl.stl). RAEA and ffmpeg are needed only to regenerate artwork, not to run this cell.
 
 ## License
 
