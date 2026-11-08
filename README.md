@@ -107,7 +107,7 @@ Workers use the workspace paths you provide. Those directories are shared, not i
 
 ## Artwork
 
-The Foresight Labs header mark is not a downloadable 3D model. Its live source is a 312 × 266 pixel-art SVG with seven color paths and 253 rectangular cells. The live site also morphs SVG paths on hover and draws a pointer-following canvas reticle; this README animation is a 3D reinterpretation of the source geometry, not a port of that hover effect.
+The [Foresight Labs](https://foresight-labs.eu/) mark is a 312 × 266 pixel-art SVG with seven color paths and 253 rectangular cells, not a 3D model. Its compiled React/Next.js bundle stores the animation as 24 frames on a 39 × 28 cell grid, packed as base64 data; a runtime decoder turns each frame into SVG paths and advances them at 12 fps on hover or focus. I couldn't find public source or metadata identifying the drawing/animation app, so I don't claim one. This README model is a source-geometry 3D reinterpretation, not their 2D player.
 
 ### How the source artwork became a 3D animation
 
@@ -119,7 +119,7 @@ The Foresight Labs header mark is not a downloadable 3D model. Its live source i
 6. **Render for GitHub.** [`render-readme-mascot.ps1`](artwork/render-readme-mascot.ps1) renders each RAEA composition to video and a representative PNG still; FFmpeg converts the video to a looping, palette-optimized GIF. The README's `<picture>` elements serve the stills when reduced motion is preferred.
 7. **Check the actual frames.** Inspect the stills, limb roots, stroke extremes, and loop seam at display size; compare the silhouette to the SVG; then verify both the GIF and reduced-motion PNG in the rendered README.
 
-The [portable source-artwork-to-3D-animation skill](skills/source-artwork-3d-animation/SKILL.md) generalizes this workflow across projects and toolchains. Copy its folder into an agent's supported skills directory to reuse it elsewhere.
+The [portable 2D frame-animation skill](skills/source-artwork-2d-animation/SKILL.md) and [portable 3D-animation skill](skills/source-artwork-3d-animation/SKILL.md) generalize these workflows across projects and toolchains. Copy either folder into an agent's supported skills directory to reuse it elsewhere.
 
 ### Regenerate the artwork
 
