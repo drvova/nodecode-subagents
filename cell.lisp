@@ -11,9 +11,7 @@
 
 (defparameter +team-file-name+ "team.sexp")
 (defparameter +team-state-key+ "subagents.team_id")
-(defparameter +task-tool+ "task")
-(defparameter +agents-tool+ "agents")
-(defparameter +irc-tool+ "irc")
+(defvar *team-lock* (bt2:make-lock :name "subagents team state"))
 (defparameter +max-context-characters+ 12000)
 (defparameter +max-message-characters+ 800)
 (defparameter +max-history-posts+ 50)
@@ -742,6 +740,36 @@
                                          selected))))
       (t (fail "unsupported agents operation ~s" op)))))
 
+(defun task (tasks &key (context "") (workspace "") (team-id "")
+                       (await nil) (timeout-seconds 60))
+  "Start workers from a list of assignment plists."
+  (run-task
+   (make-task-request
+    :tasks (map 'vector
+                (lambda (assignment)
+                  (make-agent-assignment
+                   :name (getf assignment :name)
+                   :task (getf assignment :task)
+                   :workspace (getf assignment :workspace "")))
+                tasks)
+    :context context :workspace workspace :team-id team-id
+    :await await :timeout-seconds timeout-seconds)))
+
+(defun agents (op &key (team-id "") (agent "") (timeout-seconds 60))
+  "List, wait for, or stop workers."
+  (run-agents (make-agents-request :op op :team-id team-id :agent agent
+                                   :timeout-seconds timeout-seconds)))
+
+(defun irc (op &key (team-id "") (to "all") (message "") (reply-to "")
+                   (from "") (after -1) (limit 25) (timeout-seconds 30)
+                   (await-reply nil))
+  "Use the team's shared Board."
+  (run-irc (make-irc-request :op op :team-id team-id :to to :message message
+                             :reply-to reply-to :from from :after after :limit limit
+                             :timeout-seconds timeout-seconds
+                             :await-reply await-reply)))
+
+
 (defun run-slash (arguments session-id)
   (let* ((session (or session-id nlk:*scribe-session-id*))
          (words (uiop:split-string (or arguments "")))
@@ -757,7 +785,7 @@
 
 (nle:define-cell subagents
   (:section ("subagents")
-    (:guide "task starts detached workers that share the parent's workspace but not its transcript; assignments and shared context are explicit. agents lists, waits for, or stops workers. irc uses one durable Board channel per parent session; direct mentions can wake idle members, active members read posts at their next request. Board must be enabled for IRC. Worker turns use Nodecode's active turn-budget policy, if any; this cell adds no fixed token/time cap.")
+    (:guide "Nodecode's built-in eval is the sole model tool. This cell adds Lisp APIs, not provider-facing tools. Use (subagents:task '((:name \"worker\" :task \"...\")) :context \"...\") to start detached workers; pass the context they need because the parent transcript is not inherited. Use (subagents:agents \"list\"), (subagents:agents \"wait\" :team-id \"...\") or (subagents:agents \"stop\" :team-id \"...\" :agent \"worker\"). Use (subagents:irc \"send\" :team-id \"...\" :message \"...\") to coordinate on the durable Board. Workers share the requested checkout unless assigned different existing workspaces; there is no automatic worktree isolation. Worker turns use Nodecode's active turn-budget policy, if any; this cell adds no fixed token/time cap.")
     ("max_agents" :integer :default 4 :min 1
                    :doc "maximum workers in one team; 1 to 5"))
   (:settings (lambda (values table)
@@ -768,16 +796,14 @@
                values))
   (:start (lambda ()
             (nodecode-board::setting :post-chars)))
-  (:tool +task-tool+ (nlk:contract 'task-request) 'run-task)
-  (:tool +agents-tool+ (nlk:contract 'agents-request) 'run-agents)
-  (:tool +irc-tool+ (nlk:contract 'irc-request) 'run-irc)
-  (:help :subagents "task starts independent workers; agents tracks them; irc coordinates them on a durable shared board" +primer+)
+  (:help :subagents "Nodecode eval is the sole model tool; subagents adds Lisp APIs, not tools" +primer+)
   (:command "agents" 'run-slash
             :catches 'subagents-error
             :description "List, wait for, or stop this session's subagents"))
 
 (defparameter +primer+
-  "  task({tasks:[{name,task,workspace}], context, workspace, await, timeout_seconds}) starts 1..max_agents detached sessions; the parent transcript is not inherited, so pass relevant context explicitly.
-  agents({op:'list'|'wait'|'stop', team_id, agent, timeout_seconds}) tracks or cancels workers.
-  irc({op:'join'|'send'|'inbox'|'history'|'wait'|'roster', team_id, to, message, reply_to, from, after, limit, timeout_seconds, await_reply}) uses a durable board shared by this parent session's worker groups. A direct `to` mentions and may wake an idle worker; board messages are visible to all members.
-Workers share the requested checkout unless a different existing workspace is assigned; there is no automatic worktree isolation. Child sessions inherit the parent's model selection, not its conversation. Worker turns use Nodecode's active turn-budget policy, if any; provider/model availability and limits remain upstream." )
+  "Nodecode's built-in eval is the sole model tool; this cell adds Lisp APIs, not provider-facing tools.
+  (subagents:task '((:name \"worker\" :task \"...\") ...) :context \"...\") starts 1..max_agents detached sessions. Optional keywords: :workspace, :team-id, :await, :timeout-seconds.
+  (subagents:agents \"list\"), (subagents:agents \"wait\" :team-id \"...\" :timeout-seconds 60), or (subagents:agents \"stop\" :team-id \"...\" :agent \"worker\") lists, waits for, or cancels workers.
+  (subagents:irc \"send\" :team-id \"...\" :to \"all\" :message \"...\") posts to the durable shared Board. Operations: \"join\", \"send\", \"inbox\", \"history\", \"wait\", \"roster\"; keywords include :reply-to, :from, :after, :limit, :timeout-seconds, :await-reply.
+Workers inherit the parent's model selection, not its conversation. The task assignment workspace is optional; all workspace paths are shared directories, not isolated worktrees. Worker turns use Nodecode's active turn-budget policy, if any; provider/model availability and limits remain upstream.")

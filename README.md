@@ -7,11 +7,11 @@
 <p align="center">
   <a href="#install">Install</a> ·
   <a href="#configure">Configure</a> ·
-  <a href="#tools">Tools</a> ·
+  <a href="#eval-apis">Eval APIs</a> ·
   <a href="#sessions-and-coordination">Sessions and coordination</a>
 </p>
 
-An OMP-style Nodecode cell for parallel child sessions and IRC-style coordination on Nodecode's durable Board.
+An OMP-style Nodecode cell for parallel child sessions and IRC-style coordination on Nodecode's durable Board. Nodecode's built-in `eval` is the sole model tool; this cell adds reusable Lisp APIs, not provider-facing tools.
 
 ## Install
 
@@ -49,21 +49,30 @@ Enable both cells in `~/.nodecode/config.jsonc`:
 
 When upgrading from 0.1.x, remove `budget_tokens` and `budget_seconds` from `~/.nodecode/config.jsonc`; the cell no longer reads them.
 
-## Tools
+## Eval APIs
 
-| Tool | What it does |
-| --- | --- |
-| `task` | Starts detached worker sessions from one or more named assignments. |
-| `agents` | Lists, waits for, or stops workers. |
-| `irc` | Joins the shared Board, sends and reads messages, waits for replies, or lists members. |
+The cell exports `subagents:task`, `subagents:agents`, and `subagents:irc`. Call them as Common Lisp forms through Nodecode's built-in `eval`:
+
+```lisp
+(subagents:task '((:name "worker" :task "Inspect the parser and report findings."))
+                :context "The goal is to identify parsing edge cases.")
+(subagents:agents "list")
+(subagents:irc "send" :message "I found an edge case in the parser.")
+```
+
+`task` has signature `(task tasks &key (context "") (workspace "") (team-id "") (await nil) (timeout-seconds 60))`; each assignment is a plist with `:name`, `:task`, and optional `:workspace`.
+
+`agents` has signature `(agents op &key (team-id "") (agent "") (timeout-seconds 60))`. `op` is `"list"`, `"wait"`, or `"stop"`.
+
+`irc` has signature `(irc op &key (team-id "") (to "all") (message "") (reply-to "") (from "") (after -1) (limit 25) (timeout-seconds 30) (await-reply nil))`. `op` is `"join"`, `"send"`, `"inbox"`, `"history"`, `"wait"`, or `"roster"`.
 
 ## Sessions and coordination
 
-A `task` request accepts `{ "name", "task" }` assignments and may include shared context, a common workspace, per-assignment workspaces, and an `await` timeout. Child sessions inherit the parent's model selection, not its conversation; include the context they need explicitly.
+A `task` request accepts `:name` and `:task` assignments and may include shared context, a common workspace, per-assignment workspaces, and an `:await` timeout. Child sessions inherit the parent's model selection, not its conversation; include the context they need explicitly.
 
 Workers use the workspace paths you provide. Those directories are shared, not isolated worktrees. Give workers separate existing directories when they may edit the same files.
 
-`agents` accepts `list`, `wait`, and `stop`. `irc` accepts `join`, `send`, `inbox`, `history`, `wait`, and `roster`; messages are stored on Nodecode Board. These are provider-facing tools, not Lisp functions to call from `eval`.
+`agents` accepts `"list"`, `"wait"`, and `"stop"`. `irc` accepts `"join"`, `"send"`, `"inbox"`, `"history"`, `"wait"`, and `"roster"`; messages are stored on Nodecode Board. These are Lisp APIs called through the built-in eval, not separate provider-facing tools.
 
 ## Artwork
 
@@ -78,3 +87,7 @@ RAEA is only needed to regenerate the README image, not to run this cell.
 ## License
 
 MIT. See [LICENSE](LICENSE).
+
+## Credits
+
+Built for [Nodecode](https://github.com/nodecode-ai/nodecode), the agent environment at [nodecode.ai](https://nodecode.ai). This cell uses Nodecode's documented cell and eval APIs; it does not copy upstream code.
