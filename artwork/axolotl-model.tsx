@@ -45,6 +45,9 @@ const SVG_SCALE = 0.01;
 const TAU = Math.PI * 2;
 const EYE_FILL = axolotl.layers[axolotl.layers.length - 1].fill;
 
+const LEFT_LIMB_PIVOT: [number, number] = [84, 181];
+const RIGHT_LIMB_PIVOT: [number, number] = [252, 181];
+
 const PARTS: PartDefinition[] = [
   { id: "body", pivot: [156, 133], amplitude: 0, depthAmplitude: 0, frequency: 0, phase: 0, direction: 0 },
   { id: "gill-left-upper", pivot: [80, 94], amplitude: 0.25, depthAmplitude: 0.08, frequency: 2, phase: 0.1, direction: 1 },
@@ -52,8 +55,8 @@ const PARTS: PartDefinition[] = [
   { id: "gill-left-inner", pivot: [99, 72], amplitude: 0.14, depthAmplitude: 0.05, frequency: 2, phase: 1.3, direction: 1 },
   { id: "gill-right-upper", pivot: [264, 92], amplitude: 0.23, depthAmplitude: 0.08, frequency: 2, phase: 0.55, direction: -1 },
   { id: "gill-right-side", pivot: [270, 107], amplitude: 0.19, depthAmplitude: 0.07, frequency: 2, phase: 1.1, direction: 1 },
-  { id: "limb-left", pivot: [116, 174], amplitude: 0.48, depthAmplitude: 0.16, frequency: 1, phase: 0, direction: 1 },
-  { id: "limb-right", pivot: [218, 174], amplitude: 0.46, depthAmplitude: 0.15, frequency: 1, phase: Math.PI, direction: 1 },
+  { id: "limb-left", pivot: LEFT_LIMB_PIVOT, amplitude: 0.36, depthAmplitude: 0.08, frequency: 1, phase: 0, direction: 1 },
+  { id: "limb-right", pivot: RIGHT_LIMB_PIVOT, amplitude: 0.36, depthAmplitude: 0.08, frequency: 1, phase: Math.PI, direction: 1 },
   { id: "eyes", pivot: [184, 76], amplitude: 0, depthAmplitude: 0, frequency: 0, phase: 0, direction: 0 },
 ];
 
@@ -68,8 +71,8 @@ function partFor(rectangle: Rectangle, fill: string): PartId {
   if (centerY < 76 && centerX >= 82 && centerX < 120) return "gill-left-inner";
   if (centerY < 96 && centerX > 264) return "gill-right-upper";
   if (centerY >= 96 && centerY < 137 && centerX > 276) return "gill-right-side";
-  if (centerY >= 174 && centerX < 165) return "limb-left";
-  if (centerY >= 174 && centerX > 195) return "limb-right";
+  if (centerY >= LEFT_LIMB_PIVOT[1] && centerX < 104) return "limb-left";
+  if (centerY >= RIGHT_LIMB_PIVOT[1] && centerX > 218) return "limb-right";
   return "body";
 }
 
