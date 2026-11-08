@@ -1,4 +1,4 @@
-import { AbsoluteFill, Composition, registerRoot } from "raea";
+import { AbsoluteFill, Composition, registerRoot, staticFile } from "raea";
 import { css } from "./styles.gen";
 
 type TextProps = {
@@ -68,8 +68,9 @@ function Hero() {
       <style>{css}</style>
 
       <Line left={72} top={42} width={1056} />
-      <Text text="NODECODE  /  COMMUNITY CELL" left={72} top={62} width={480} size={14} color="var(--brand-muted)" mono weight={500} tracking="0.12em" />
-      <Line left={72} top={102} width={34} height={2} color="var(--brand-accent)" />
+      <img src={staticFile("nodecode-axolotl.svg")} alt="" style={{ position: "absolute", left: 72, top: 48, width: 36, height: 31 }} />
+      <Text text="NODECODE  /  COMMUNITY CELL" left={120} top={62} width={480} size={14} color="var(--brand-muted)" mono weight={500} tracking="0.12em" />
+      <Line left={120} top={102} width={34} height={2} color="var(--brand-accent)" />
 
       <div style={{ position: "absolute", left: 72, top: 135, display: "flex", alignItems: "baseline", fontFamily: "var(--brand-font-heading)", fontSize: 76, fontWeight: 500, lineHeight: 0.98, letterSpacing: "-0.04em" }}>
         <span style={{ color: "var(--brand-primary)" }}>Sub</span>

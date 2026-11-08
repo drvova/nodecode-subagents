@@ -1,7 +1,7 @@
 # Nodecode Subagents
 
 <p align="center">
-  <img src="artwork/subagents-hero.png" alt="A named task assignment branches into detached worker sessions, which coordinate through Nodecode Board." width="100%" />
+  <img src="artwork/subagents-hero.png" alt="Nodecode's axolotl mascot sits beside named task assignments branching into detached worker sessions that coordinate through Nodecode Board." width="100%" />
 </p>
 
 <p align="center">
@@ -67,7 +67,7 @@ Workers use the workspace paths you provide. Those directories are shared, not i
 
 ## Artwork
 
-The header is rendered with [RAEA](https://raea.io/install). The composition and measured Nodecode palette are in `artwork/`; from that directory, regenerate the image with:
+The header is rendered with [RAEA](https://raea.io/install). The hero uses the original axolotl mascot vector from the [nodecode.ai](https://nodecode.ai/) header, stored at `artwork/media/nodecode-axolotl.svg`. The composition and measured palette are in `artwork/`; from that directory, regenerate the image with:
 
 ```sh
 raea render readme-hero.tsx --frame 0 -o subagents-hero.png
