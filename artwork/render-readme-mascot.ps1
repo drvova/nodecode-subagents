@@ -37,7 +37,7 @@ foreach ($job in $jobs) {
   & $raea render $source --composition $job.Composition --frame $job.Frame -o $still
   if ($LASTEXITCODE -ne 0) { throw "RAEA static fallback render failed for $($job.Name)." }
 
-  & $ffmpegCommand.Source -y -i $video -filter_complex "fps=12,split[s0][s1];[s0]palettegen=stats_mode=diff[p];[s1][p]paletteuse=dither=bayer:bayer_scale=3" -loop 0 $gif
+  & $ffmpegCommand.Source -y -i $video -filter_complex "fps=24,split[s0][s1];[s0]palettegen=stats_mode=diff[p];[s1][p]paletteuse=dither=bayer:bayer_scale=3" -loop 0 $gif
   if ($LASTEXITCODE -ne 0) { throw "GIF encoding failed for $($job.Name)." }
 
   Get-Item -LiteralPath $gif, $still | Select-Object FullName, Length

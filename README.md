@@ -3,7 +3,7 @@
 <p align="center">
   <picture>
     <source media="(prefers-reduced-motion: reduce)" srcset="artwork/subagents-hero.png" />
-    <img src="artwork/subagents-hero.gif" alt="The live Nodecode axolotl, built from its exact SVG geometry as a 3D extrusion, swimming with fluttering gills and out-of-phase limb strokes beside the subagents workflow." width="100%" />
+    <img src="artwork/subagents-hero.gif" alt="The source-derived axolotl banks through a layered 3D swim cycle, with independent gill fanning, out-of-phase paddles, body breathing and a quick blink beside the subagents workflow." width="100%" />
   </picture>
 </p>
 
@@ -21,7 +21,7 @@ An OMP-style Nodecode cell for parallel child sessions and IRC-style coordinatio
 <p align="right">
   <picture>
     <source media="(prefers-reduced-motion: reduce)" srcset="artwork/media/axolotl-setup-still.png" />
-    <img src="artwork/axolotl-setup.gif" alt="The source-derived axolotl swims beside the installation instructions, fluttering its gills as its limbs paddle." width="200" />
+    <img src="artwork/axolotl-setup.gif" alt="A source-derived 3D axolotl swims beside the installation steps, fanning its gills, paddling its limbs and blinking briefly." width="200" />
   </picture>
 </p>
 
@@ -46,7 +46,7 @@ Nodecode must have local-cell loading enabled. Install and enable the `nodecode-
 <p align="right">
   <picture>
     <source media="(prefers-reduced-motion: reduce)" srcset="artwork/media/axolotl-configure-still.png" />
-    <img src="artwork/axolotl-configure.gif" alt="The source-derived axolotl swims beside configuration instructions, with gills and limbs moving independently." width="200" />
+    <img src="artwork/axolotl-configure.gif" alt="The source-derived axolotl turns and paddles beside configuration instructions, its gills and limbs moving independently." width="200" />
   </picture>
 </p>
 
@@ -71,7 +71,7 @@ When upgrading from 0.1.x, remove `budget_tokens` and `budget_seconds` from `~/.
 <p align="right">
   <picture>
     <source media="(prefers-reduced-motion: reduce)" srcset="artwork/media/axolotl-eval-apis-still.png" />
-    <img src="artwork/axolotl-eval-apis.gif" alt="The source-derived axolotl paddles through a seamless swim loop beside the eval API section." width="200" />
+    <img src="artwork/axolotl-eval-apis.gif" alt="A source-derived 3D axolotl swims through a seamless loop beside the eval API section, with a quick blink and independently moving gills." width="200" />
   </picture>
 </p>
 
@@ -95,7 +95,7 @@ The cell exports `subagents:task`, `subagents:agents`, and `subagents:irc`. Call
 <p align="right">
   <picture>
     <source media="(prefers-reduced-motion: reduce)" srcset="artwork/media/axolotl-sessions-still.png" />
-    <img src="artwork/axolotl-sessions.gif" alt="The source-derived axolotl turns and paddles through the sessions section, its gills fluttering with the swim cycle." width="200" />
+    <img src="artwork/axolotl-sessions.gif" alt="The source-derived axolotl rolls through a swim cycle beside the sessions section, fanning its gills and paddling its limbs." width="200" />
   </picture>
 </p>
 
@@ -107,7 +107,7 @@ Workers use the workspace paths you provide. Those directories are shared, not i
 
 ## Artwork
 
-The live homepage header uses a 312 × 266 SVG; it does not expose a 3D model or animation asset. This artwork preserves the live vector's seven paths and 253 rectangles, extrudes the original palette into depth, and rigs its gills and paired limbs. The gills flutter twice per swim stroke, the limbs paddle out of phase, and the body rolls, breathes, and turns on a phase-closed loop.
+The animated top-left Foresight Labs mark is not a downloadable 3D model: it is a 312 × 266 pixel-art SVG whose path geometry changes on pointer hover, with a canvas reticle that follows the pointer. This README keeps the source's seven color layers and 253 rectangles, extrudes them into a thicker 3D relief, and adds a faster swim loop with independent gill and limb motion, body breathing, and a blink.
 
 From `artwork/`, regenerate the geometry, STL preview, animation loops, and reduced-motion stills with [RAEA](https://raea.io/install) and `ffmpeg` installed:
 

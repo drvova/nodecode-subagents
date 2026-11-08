@@ -6,8 +6,8 @@ import { Axolotl } from "./axolotl-model";
 
 const WIDTH = 240;
 const HEIGHT = 160;
-const FRAMES = 48;
-const FPS = 12;
+const FRAMES = 96;
+const FPS = 24;
 
 type SwimProps = {
   phase: number;
@@ -19,11 +19,11 @@ type SwimProps = {
 function Swim({ phase, yaw, direction, tint }: SwimProps) {
   const frame = useCurrentFrame();
   const cycle = (frame / FRAMES) * Math.PI * 2;
-  const drift = Math.sin(cycle + phase) * 0.28 * direction;
+  const drift = Math.sin(cycle + phase) * 0.32 * direction;
   return (
     <AbsoluteFill style={{ background: tint }}>
       <Camera3d
-        transform={Transform.fromXyz(0, 0.45, 3.8).lookingAt([0, 0, 0])}
+        transform={Transform.fromXyz(0.62, 0.72, 3.8).lookingAt([0, 0, 0])}
         projection={{ Perspective: { fov: (44 * Math.PI) / 180 } }}
       />
       <AmbientLight brightness={150} />
@@ -31,7 +31,7 @@ function Swim({ phase, yaw, direction, tint }: SwimProps) {
         transform={Transform.fromXyz(-2.8, 4.2, 5).lookingAt([0, 0, 0])}
         illuminance={9800}
       />
-      <Axolotl phase={phase} loopFrames={FRAMES} yaw={yaw} scale={0.9} x={drift} y={0.02 + Math.sin(cycle * 2 + phase) * 0.025} />
+      <Axolotl phase={phase} loopFrames={FRAMES} yaw={yaw} scale={0.9} x={drift} y={0.02 + Math.sin(cycle * 2 + phase) * 0.04} />
     </AbsoluteFill>
   );
 }

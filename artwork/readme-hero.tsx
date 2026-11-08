@@ -66,7 +66,7 @@ function Hero() {
 
       <Canvas3D layered>
         <Camera3d
-          transform={Transform.fromXyz(0, 0.28, 7.5).lookingAt([0, 0, 0])}
+          transform={Transform.fromXyz(0.9, 0.6, 7.5).lookingAt([0, 0, 0])}
           projection={{ Perspective: { fov: (40 * Math.PI) / 180 } }}
         />
         <AmbientLight brightness={150} />
