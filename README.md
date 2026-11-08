@@ -36,14 +36,14 @@ Enable both cells in `~/.nodecode/config.jsonc`:
   "board": { "enabled": true },
   "subagents": {
     "enabled": true,
-    "max_agents": 4,
-    "budget_tokens": 300000,
-    "budget_seconds": 3600
+    "max_agents": 4
   }
 }
 ```
 
-`max_agents` accepts 1–5. Worker token and time budgets apply independently to each worker.
+`max_agents` accepts 1–5 and controls concurrency only. Worker turns use Nodecode's active turn-budget policy, if any; this cell adds no fixed per-worker or team-wide token/time ceiling. Provider/model availability and limits remain upstream.
+
+When upgrading from 0.1.x, remove `budget_tokens` and `budget_seconds` from `~/.nodecode/config.jsonc`; they are no longer read.
 
 ## Tool behavior
 

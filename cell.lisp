@@ -1,4 +1,4 @@
-;;;; cell.lisp --- parallel child sessions with bounded budgets and a shared IRC-style board.
+;;;; cell.lisp --- parallel child sessions using Nodecode's turn-budget policy and shared board.
 ;;;;
 ;;;; SPDX-License-Identifier: MIT
 
@@ -238,9 +238,6 @@
                        (list :id team-id
                              :origin origin
                              :board (board-name-for origin)
-                             :opened-at (get-universal-time)
-                             :budget-tokens (setting :budget-tokens)
-                             :budget-seconds (setting :budget-seconds)
                              :nodes nil))))
       (when (and existing (not (equal origin (getf existing :origin))))
         (fail "team ~a belongs to another parent session" team-id))
@@ -306,10 +303,6 @@
         (let ((value (gethash key payload)))
           (when (integerp value) (incf spend value)))))))
 
-(defun node-left (session node config &optional (now (get-universal-time)))
-  (values (- (getf config :budget-tokens) (node-spend session))
-          (- (getf config :budget-seconds)
-             (- now (or (getf node :started-at) (getf config :opened-at))))))
 
 (defun config-for-node (session)
   (let* ((team-id (team-id-from-state session))
@@ -318,15 +311,6 @@
     (and node (member (getf node :status) '(:submitting :started :idle) :test #'eq)
          (values config node))))
 
-(defun budget-hook (next turn)
-  (let* ((session (getf turn :session-id))
-         (pair (multiple-value-list (config-for-node session)))
-         (config (first pair))
-         (node (second pair)))
-    (if (and config node)
-        (multiple-value-bind (tokens seconds) (node-left session node config)
-          (list :tokens (max 1 tokens) :seconds (max 1 seconds)))
-        (funcall next turn))))
 
 (defun agent-prompt (config node shared-context)
   (let* ((teams (teams-under-origin (getf config :origin)))
@@ -457,29 +441,31 @@
       (setf (nodecode-board::cursor session) (first (car (last posts)))))
     posts))
 
-(defun node-status-line (config node)
+(defun node-status-line (node)
   (let* ((id (getf node :id))
          (status (getf node :status))
-         (active (and (nlk:session-exists-p id) (nlk:active-turn-p id))))
-    (multiple-value-bind (tokens seconds)
-        (if (nlk:session-exists-p id)
-            (node-left id node config)
-            (values 0 0))
-      (format nil "~a — ~a (~a), ~d turn~:p, ~:d tokens / ~:d s left~@[; error: ~a~]"
-              (getf node :name) id
-              (cond (active "running")
-                    ((eq status :ready) "ready")
-                    ((eq status :failed) "failed")
-                    ((eq status :pending) "pending")
-                    ((eq status :submitting) "starting")
-                    (t "idle"))
-              (if (nlk:session-exists-p id) (node-turns id) 0)
-              (max 0 tokens) (max 0 seconds) (getf node :error)))))
+         (exists (nlk:session-exists-p id))
+         (active (and exists (nlk:active-turn-p id)))
+         (turns (if exists (node-turns id) 0))
+         (tokens (if exists (node-spend id) 0))
+         (started-at (getf node :started-at))
+         (elapsed (if (and (integerp started-at) (plusp started-at))
+                      (max 0 (- (get-universal-time) started-at))
+                      0)))
+    (format nil "~a — ~a (~a), ~d turn~:p, ~:d tokens used / ~:d s elapsed~@[; error: ~a~]"
+            (getf node :name) id
+            (cond (active "running")
+                  ((eq status :ready) "ready")
+                  ((eq status :failed) "failed")
+                  ((eq status :pending) "pending")
+                  ((eq status :submitting) "starting")
+                  (t "idle"))
+            turns tokens elapsed (getf node :error))))
 
 (defun team-status-text (config)
   (format nil "team ~a (board #~a), parent ~a:~%~{  ~a~%~}"
           (getf config :id) (getf config :board) (getf config :origin)
-          (mapcar (lambda (node) (node-status-line config node)) (getf config :nodes))))
+          (mapcar #'node-status-line (getf config :nodes))))
 
 (defun all-team-status-text (configs)
   (if configs
@@ -771,13 +757,9 @@
 
 (nle:define-cell subagents
   (:section ("subagents")
-    (:guide "task starts detached workers that share the parent's workspace but not its transcript; assignments and shared context are explicit. agents lists, waits for, or stops workers. irc uses one durable Board channel per parent session; direct mentions can wake idle members, active members read posts at their next request. Board must be enabled for IRC.")
+    (:guide "task starts detached workers that share the parent's workspace but not its transcript; assignments and shared context are explicit. agents lists, waits for, or stops workers. irc uses one durable Board channel per parent session; direct mentions can wake idle members, active members read posts at their next request. Board must be enabled for IRC. Worker turns use Nodecode's active turn-budget policy, if any; this cell adds no fixed token/time cap.")
     ("max_agents" :integer :default 4 :min 1
-                   :doc "maximum workers in one team; 1 to 5")
-    ("budget_tokens" :integer :default 300000 :min 1
-                      :doc "billable tokens allowed per worker across all its turns")
-    ("budget_seconds" :integer :default 3600 :min 1
-                       :doc "wall-clock budget per worker, starting when its first task is submitted"))
+                   :doc "maximum workers in one team; 1 to 5"))
   (:settings (lambda (values table)
                (declare (ignore table))
                (when (> (getf values :max-agents) 5)
@@ -786,7 +768,6 @@
                values))
   (:start (lambda ()
             (nodecode-board::setting :post-chars)))
-  (:hook 'nle:turn-budget #'budget-hook)
   (:tool +task-tool+ (nlk:contract 'task-request) 'run-task)
   (:tool +agents-tool+ (nlk:contract 'agents-request) 'run-agents)
   (:tool +irc-tool+ (nlk:contract 'irc-request) 'run-irc)
@@ -799,4 +780,4 @@
   "  task({tasks:[{name,task,workspace}], context, workspace, await, timeout_seconds}) starts 1..max_agents detached sessions; the parent transcript is not inherited, so pass relevant context explicitly.
   agents({op:'list'|'wait'|'stop', team_id, agent, timeout_seconds}) tracks or cancels workers.
   irc({op:'join'|'send'|'inbox'|'history'|'wait'|'roster', team_id, to, message, reply_to, from, after, limit, timeout_seconds, await_reply}) uses a durable board shared by this parent session's worker groups. A direct `to` mentions and may wake an idle worker; board messages are visible to all members.
-Workers share the requested checkout unless a different existing workspace is assigned; there is no automatic worktree isolation. Child sessions inherit the parent's model selection, not its conversation. Each worker has independent token and time budgets." )
+Workers share the requested checkout unless a different existing workspace is assigned; there is no automatic worktree isolation. Child sessions inherit the parent's model selection, not its conversation. Worker turns use Nodecode's active turn-budget policy, if any; provider/model availability and limits remain upstream." )

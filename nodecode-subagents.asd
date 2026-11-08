@@ -5,7 +5,7 @@
 (asdf:defsystem "nodecode-subagents"
   :description "Parallel task sessions with lifecycle controls and IRC-style board messaging"
   :license "MIT"
-  :version "0.1.0"
+  :version "0.2.0"
   :depends-on ("nodecode" "nodecode-board")
   :serial t
   :components ((:file "package")
